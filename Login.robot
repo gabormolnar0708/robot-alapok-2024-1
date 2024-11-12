@@ -1,37 +1,28 @@
 *** Settings ***
-Library    SeleniumLibrary
+Resource    Resources/Common/CommonWeb.resource
+Resource    Resources/PO/MainPage.resource
+Resource    Resources/PO/LoginPage.resource
+
+Test Setup    CommonWeb.Begin Web Test
+Test Teardown    CommonWeb.End Web Test
 
 *** Variables ***
-${URL}=    https://petstore.octoperf.com/actions/Catalog.action
-${BROWSER}=    chrome
-${CHROME_OPTIONS}=    add_argument("--disable-search-engine-choice-screen");
-...    add_argument("--ignore-certificate-errors")
-${SIGN_IN_BUTTON}=    xpath://a[text()="Sign In"]
-${USERNAME_FIELD}=    xpath://input[@name="username"]
-${PASSWORD_FIELD}=    xpath://input[@name="password"]
+
 
 *** Test Cases ***
+User can not login with invalid credentials
+    MainPage.Navigate To
+    MainPage.Click Sign In
+    LoginPage.Fill Username    TestUser
+    LoginPage.Fill Password    asdf1234
+    LoginPage.Submit Credentials
+    LoginPage.Verify Invalid Login Message
+    
+
 User can login with valid credentials
-    Begin Web Test
-    Navigate To MainPage
-    Click Sign In
-    Fill Username    TestUser
-    Sleep    10s
-
-*** Keywords ***
-Begin Web Test
-    SeleniumLibrary.Open Browser    url=about:blank    browser=${BROWSER}    options=${CHROME_OPTIONS}
-    SeleniumLibrary.Maximize Browser Window
-    Maximize Browser Window
-
-Navigate To MainPage
-    SeleniumLibrary.Go To    url=${URL}
-
-Click Sign In
-    SeleniumLibrary.Wait Until Page Contains Element    ${SIGN_IN_BUTTON}
-    SeleniumLibrary.Click Element    ${SIGN_IN_BUTTON}
-
-Fill Username
-    [Arguments]    ${username}
-    SeleniumLibrary.Wait Until Page Contains Element    ${USERNAME_FIELD}
-    SeleniumLibrary.Input Text    ${USERNAME_FIELD}    ${username}
+    MainPage.Navigate To
+    MainPage.Click Sign In
+    LoginPage.Fill Username    robot-base241111
+    LoginPage.Fill Password    robot-base241111   
+    LoginPage.Submit Credentials
+    #Verify Success Login
